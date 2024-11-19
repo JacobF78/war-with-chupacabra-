@@ -2,7 +2,9 @@
     "name": "war with chupacabra ",
     "description": "",
     "dependencies": {
-        "device": "*"
+        "device": "*",
+        "arcade-sprite-util": "github:jwunderl/arcade-sprite-util#v0.4.1",
+        "Timers": "github:microsoft/arcade-timers#v1.1.0"
     },
     "files": [
         "main.blocks",
@@ -18,7 +20,7 @@
         "test.ts"
     ],
     "targetVersions": {
-        "target": "1.12.56",
+        "target": "1.12.57",
         "targetId": "arcade"
     },
     "supportedTargets": [
