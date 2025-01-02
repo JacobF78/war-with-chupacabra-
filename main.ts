@@ -1,6 +1,7 @@
 namespace SpriteKind{
     export const Roomba = SpriteKind.create()
     export const Target = SpriteKind.create()
+    export const Excavator = SpriteKind.create()
 }
 class Enemy {
     health:number
@@ -48,8 +49,50 @@ function createPlayer() {
     controller.moveSprite(playerSprite)
     scene.cameraFollowSprite(playerSprite)
 }
+function createExcavator(tileLocation: tiles.Location){
+    let excavatorSprite: Sprite = sprites.create(img`
+        ........................................
+        ........................................
+        ........................................
+        ........................................
+        ........................................
+        ........................................
+        ........................................
+        ........................................
+        ........................................
+        ........................................
+        ........................................
+        ........................................
+        ........................................
+        ........................................
+        ..ffffffffffffffffffff..................
+        ..ffff5555f5555fffffff..................
+        ..fff55555f55111ffffff..................
+        ..ff555555f55111ffffff..................
+        ....555555f55111........................
+        ....555555f5555.........................
+        ....555555f555555555555555555555555555..
+        ....fffffffffffbbbbbbbbbbbbbbbbbbbbbb5..
+        ....555555f5555555555555555555555555b5..
+        ....555555f5555...............fff5bbb5..
+        ....555555f5555...............fffff.....
+        ..ff555555f5555fffffff........fffff.....
+        ..fff55555f5555fffffff........fffff.....
+        ..ffff5555f5555fffffff..................
+        ..ffffffffffffffffffff..................
+        ........................................
+        ........................................
+        ........................................
+    `,SpriteKind.Excavator)
+    tiles.placeOnTile(excavatorSprite, tileLocation)
+}
+function generateTileMapExcavator(){
+    for(let i = 0; i < 1; i++){
+        createExcavator(tiles.getRandomTileByType(assets.tile`floorTile`))
+    }
+}
 function generateTileMapSlime(){
-    let enemyAmount = randint(1,15)
+    let enemyAmount = randint(1,4)
     for(let i = 0; i <= enemyAmount;i++){
         createRandomEnemy(tiles.getRandomTileByType(assets.tile`floorTile`))
 
@@ -72,12 +115,13 @@ function onStart(){
     createTargetSprite()
     placeRoombaOnTileMap()
     generateTileMapSlime()
+    generateTileMapExcavator()
 }
  //entry point to game
 onStart()
 //creating sprites on tilemap
 function placeRoombaOnTileMap() {
-    let roombaAmount: number = randint(1, 100)
+    let roombaAmount: number = randint(1, 10)
     for (let i = 0; i < roombaAmount; i++) {
         createRoomba(tiles.getRandomTileByType(assets.tile`floorTile`))
     }
@@ -104,7 +148,7 @@ function setRandomVelocity(sprite:Sprite,maxSpeed:number,directionX:number,direc
 
 //keyboard input
 controller.A.onEvent(ControllerButtonEvent.Pressed, function(){
-    let nearestEntity:Sprite[] = spriteutils.getSpritesWithin(SpriteKind.Roomba,40,playerSprite)
+    let nearestEntity:Sprite[] = spriteutils.getSpritesWithin(SpriteKind.Roomba,40,playerSprite).concat(spriteutils.getSpritesWithin(SpriteKind.Excavator, 40, playerSprite))
     if(nearestEntity.length > 0&& !currentControlledEntity ){
         info.startCountdown(15)
         scene.cameraFollowSprite(nearestEntity[0])
@@ -127,7 +171,7 @@ function resetControlAbility(){
 }
 // game updates
 game.onUpdate(function(){
-    let targetSpriteLocation = spriteutils.getSpritesWithin(SpriteKind.Roomba,40,playerSprite)
+    let targetSpriteLocation = spriteutils.getSpritesWithin(SpriteKind.Roomba,40,playerSprite).concat(spriteutils.getSpritesWithin(SpriteKind.Excavator, 40, playerSprite))
         targetSprite.setFlag(SpriteFlag.Invisible,true)
     if(targetSpriteLocation.length > 0 && currentControlledEntity == null){
         targetSprite.setFlag(SpriteFlag.Invisible,false)
@@ -165,6 +209,8 @@ game.onUpdate(function(){
 sprites.onOverlap(SpriteKind.Roomba, SpriteKind.Enemy,function(sprite,otherSprite){
     if(currentControlledEntity == null){
         sprite.destroy()
+        roombaExplodeAnimation(sprite)
+        
             return
         
     }
@@ -175,16 +221,215 @@ sprites.onOverlap(SpriteKind.Roomba, SpriteKind.Enemy,function(sprite,otherSprit
     if(!isDashing){
         if (sprite.id == currentControlledEntity.id) {
             resetControlAbility()
+            scene.cameraShake(40, 500)
         }
         sprite.destroy()
+        roombaExplodeAnimation(sprite)
+        
         return
     }
     if(sprite.id == currentControlledEntity.id){
         otherSprite.destroy()
+        slimeExplodeAnimation(otherSprite)
+        
         return
     }
     
 })
+function roombaExplodeAnimation(sprite: Sprite){
+    let effectsSprite: Sprite = sprites.create(img`
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+        `, SpriteKind.Food)
+    effectsSprite.setPosition(effectsSprite.x = sprite.x, effectsSprite.y = sprite.y)
+    animation.runImageAnimation(effectsSprite, [
+        img`
+                . . . . . . . . . . . . . . . .
+                . . . . f f f f f f f . . . . .
+                . . f f 1 1 1 1 1 1 1 f f . . .
+                . f f 1 f f f f f f f 1 f f . .
+                . f 1 f f f f f f f f f 1 f . .
+                f 1 f f f f f f f f f f f 1 f .
+                f 1 f f b b b b b f f f f 1 f .
+                f 1 f f b f f f b f f f f 1 f .
+                f 1 f f b f f f b f f f f 1 f .
+                f 1 f f b b b b b f f f f 1 f .
+                f 1 f f f f f f f f f f f 1 f .
+                f 1 f f 2 2 f f f f f f f 1 f .
+                . f 1 f 2 2 f f f f f f 1 f . .
+                . f f 1 f f f f f f f 1 f f . .
+                . . f f 1 1 1 1 1 1 1 f f . . .
+                . . . . f f f f f f f . . . . .
+            `,
+        img`
+                . . . . . . . . . . . . . . . .
+                . . . . f f f f f f f . . . . .
+                . . f f 1 1 1 1 1 1 1 f f . . .
+                . f f 1 f f f f f f f 1 f f . .
+                . f 1 f f f f f f f f f 1 f . .
+                f 1 f f f f f 2 2 2 f f f 1 f .
+                f 1 f f b 2 2 2 2 2 f f f 1 f .
+                f 1 f f b 2 2 2 2 2 f f f 1 f .
+                f 1 f f b 2 2 2 2 2 f f f 1 f .
+                f 1 f f b b 2 2 2 f f f f 1 f .
+                f 1 f f f f f f f f f f f 1 f .
+                f 1 f f 2 2 f f f f f f f 1 f .
+                . f 1 f 2 2 f f f f f f 1 f . .
+                . f f 1 f f f f f f f 1 f f . .
+                . . f f 1 1 1 1 1 1 1 f f . . .
+                . . . . f f f f f f f . . . . .
+            `,
+        img`
+                . . . . . . . . . . . . . . . .
+                . . . . f f f f f f f . . . . .
+                . . f f 4 4 1 1 1 1 1 f f . . .
+                . f f 1 4 4 4 4 f f f 1 f f . .
+                . f 1 4 4 4 4 4 4 4 4 4 1 f . .
+                f 1 f 4 4 4 f 2 2 2 4 4 4 1 f .
+                f 1 f 4 4 2 2 2 2 2 4 4 4 4 f .
+                f 1 f 4 4 2 2 2 2 2 4 f 4 1 f .
+                f 1 f 4 4 4 2 2 2 2 4 4 4 1 f .
+                f 1 f 4 4 4 2 2 2 4 4 4 f 1 f .
+                f 1 f 4 4 4 4 4 4 4 4 f f 1 f .
+                f 1 f f 4 4 4 4 4 f f f f 1 f .
+                . f 1 f 2 2 f f f f f f 1 f . .
+                . f f 1 f f f f f f f 1 f f . .
+                . . f f 1 1 1 1 1 1 1 f f . . .
+                . . . . f f f f f f f . . . . .
+            `,
+        img`
+                . . . . . 5 5 5 . . . . . . . .
+                . . . . 5 5 f 5 5 f f . . . . .
+                . . f 5 4 4 1 5 5 5 5 5 f . . .
+                . f 5 1 4 4 4 4 f f f 5 5 f . .
+                . f 5 4 4 4 4 4 4 4 4 4 5 5 . .
+                f 1 5 4 4 4 f 2 2 2 4 4 4 5 5 .
+                f 1 f 4 4 2 2 2 2 2 4 4 4 5 5 .
+                f 5 5 4 4 2 2 2 2 2 4 f 4 5 f .
+                f 5 5 4 4 4 2 2 2 2 4 4 5 5 f .
+                f 5 5 4 4 4 2 2 2 4 4 4 5 5 f .
+                f 5 5 5 4 4 4 4 4 4 5 5 5 1 f .
+                f 1 5 5 4 4 4 4 5 5 5 5 5 1 f .
+                . f 5 5 5 5 5 5 5 f f 5 1 f . .
+                . f f 5 5 5 5 5 5 5 5 5 f f . .
+                . . f f 1 1 1 1 1 1 1 f f . . .
+                . . . . f f f f f f f . . . . .
+            `,
+        img`
+                . . . . . 5 2 2 2 2 2 2 2 2 . .
+                2 2 2 2 2 2 2 2 2 2 2 . . 2 2 .
+                2 . f 5 2 2 2 5 5 5 5 2 2 . . 2
+                2 f 5 2 2 4 2 2 f f f 5 2 2 . 2
+                2 f 5 2 4 4 4 4 2 4 4 4 5 2 . 2
+                2 1 2 2 4 4 f 2 2 2 4 4 4 5 2 2
+                2 1 2 2 4 2 2 2 2 2 4 4 4 5 2 2
+                2 5 2 2 4 2 2 2 2 2 4 f 4 5 2 2
+                2 2 5 2 4 4 2 2 2 2 4 4 5 2 f 2
+                2 2 5 2 4 4 2 2 2 4 4 4 5 2 f 2
+                2 2 5 5 4 4 4 4 4 4 5 5 2 2 2 .
+                f 2 2 5 4 4 4 4 5 5 5 2 2 2 f .
+                . f 2 2 5 5 5 5 2 2 2 2 2 f . .
+                . f 2 2 2 2 2 2 2 2 2 2 f f . .
+                . . f 2 2 2 2 2 2 2 1 f f . . .
+                . . . . f f f f f f f . . . . .
+            `
+    ], 50, false)
+    effectsSprite.lifespan = 251
+
+    
+}
+function slimeExplodeAnimation(sprite: Sprite){
+    let effectsSprite: Sprite = sprites.create(img`
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+        `, SpriteKind.Food)
+    effectsSprite.setPosition(effectsSprite.x = sprite.x, effectsSprite.y = sprite.y)
+    animation.runImageAnimation(effectsSprite, [
+        img`
+                . . . . . . . . . . . . . . . .
+                . . . . . . . . . . . . . . . .
+                . . . . . . . . . . . . . . . .
+                . . . . . . . . . . . . . . . .
+                . . . . . . . . . . . . . . . .
+                . . . . . 7 7 7 7 7 7 . . . . .
+                . . . . . 7 7 7 7 7 7 7 7 . . .
+                . . . . . 7 7 7 7 7 7 7 7 7 . .
+                . . 7 7 7 7 7 7 7 7 7 7 7 7 . .
+                . 7 7 f f f 7 7 7 7 7 f f f 7 .
+                . 7 7 f f f 7 7 7 7 7 f f f 7 7
+                7 7 7 f f f 7 7 7 7 7 f f f 7 7
+                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+            `,
+        img`
+                . . . . . . . . . . . . . . . .
+                . . . . . . . . . . . . . . . .
+                . . . . . . . . . . 7 . . . . .
+                . . . . 7 . . 7 . . . 7 . . 7 .
+                . . . . . . . . 7 7 . . . . 7 .
+                . . 7 . . 7 . 7 7 . 7 . . . 7 .
+                . . . . . . 7 7 . . 7 7 7 . 7 .
+                7 . . 7 7 . 7 . . . . 7 7 7 7 .
+                . . 7 7 . . . 7 . . 7 . . 7 7 7
+                . 7 7 . . . . . . . . . . . . .
+                . 7 . . . f . . . . . . f . . .
+                7 . 7 f . . . 7 . . . f . . 7 .
+                7 7 7 7 7 7 7 7 7 7 . . . 7 7 7
+                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+            `,
+        img`
+                . . . . . . . . . . 7 . . . . .
+                . . . . . . 7 . . . . . . 7 . 7
+                . . 7 . . . . . . . 7 . . . . .
+                . . . . 7 . . 7 . . . 7 . . 7 .
+                . 7 . . . . . . . . . . . . 7 .
+                . . 7 . . 7 . . 7 . . . . . 7 .
+                . . . . . . . 7 . . . . 7 . 7 .
+                7 . . 7 . . . . . . . . . 7 7 .
+                . . . . . . . 7 . . . . . . . .
+                . . . . . . . . . . . . . . . .
+                . 7 . . . . . . . . . . . . . .
+                . . . . . . . . . . . . . . . .
+                . . . . . . . . . . . . . . . .
+                7 . . . . . . . . . . . . . . 7
+                7 . . . . . . . . . . . . . . .
+                7 7 7 7 7 . . . 7 . . . . 7 7 .
+            `
+    ], 100, false)
+    effectsSprite.lifespan = 301
+}
 controller.B.onEvent(ControllerButtonEvent.Pressed, function(){
     if(currentControlledEntity == null){
         return
@@ -211,4 +456,4 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function(){
     
    
     
-})
+}) 
