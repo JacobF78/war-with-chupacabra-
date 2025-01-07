@@ -19,14 +19,91 @@ class Enemy {
         this.spriteImage.push(image)
     }
     createSprite(){
-        return sprites.create(this.spriteImage[0],this.kind)
+        let enemySprite = sprites.create(this.spriteImage[0], this.kind)
+        sprites.setDataNumber(enemySprite, "health", this.health)
+        sprites.setDataNumber(enemySprite, "attackPower", this.attackPower)
+        
+        return enemySprite
     }
 
     
 }
+
+class Entity{
+    speed: number
+    health: number
+    spriteImage: Image
+    attackPower: number
+    tileImage: Image
+    kind: number
+    spriteAnimation: Image[][] = null
+
+    constructor(speed:number, spriteImage:Image, health:number, attackPower: number,tileImage: Image, kind:number){
+        this.speed = speed
+        this.health = health
+        this.spriteImage = spriteImage
+        this.attackPower = attackPower
+        this.tileImage = tileImage
+        this.kind = kind
+    }
+
+    createSprite(){
+        let entitySprite = sprites.create(this.spriteImage, this.kind)
+        sprites.setDataNumber(entitySprite, "health", this.health)
+        sprites.setDataNumber(entitySprite, "attackPower", this.attackPower)
+        sprites.setDataImage(entitySprite,"tileImage", this.tileImage)
+        sprites.setDataNumber(entitySprite, "speed", this.speed)
+        setRandomVelocity(entitySprite, this.speed, randint (-1,1), randint(-1,1))
+        if(this.spriteAnimation){
+            characterAnimations.loopFrames(
+                entitySprite, this.spriteAnimation[0],0,
+                Predicate.FacingLeft
+            )
+            characterAnimations.loopFrames(
+                entitySprite, this.spriteAnimation[1], 0,
+                Predicate.FacingUp
+            )
+            characterAnimations.loopFrames(
+                entitySprite, this.spriteAnimation[2], 0,
+                Predicate.FacingRight
+            )
+            characterAnimations.loopFrames(
+                entitySprite, this.spriteAnimation[3], 0,
+                Predicate.FacingDown
+            )
+        }
+
+        return entitySprite
+    }
+    addAnimation(animation: Image[][]){
+        this.spriteAnimation = (animation)
+    }
+}
+
 let enemyObjects: Enemy[] = [
-    new Enemy(2,[assets.image`slime`],555,SpriteKind.Enemy)
+    new Enemy(2,[assets.image`slime`],5,SpriteKind.Enemy)
 ]
+let entityObject: Entity[] = [
+    new Entity(20, assets.image`roomba`,1,1,assets.tile`floorTile`, SpriteKind.Roomba),
+    new Entity(0,assets.image `excavator`, 20,30,assets.tile `floorTile`, SpriteKind.Excavator)
+]
+
+entityObject[1].addAnimation([
+    [ 
+        assets.image`excavatorLeft`
+
+    ],
+    [
+        assets.image`excavatorUp`
+    ],
+    [
+        assets.image`excavatorRight`
+    ],
+    [
+        assets.image`excavatorDown`
+    ]
+])
+
 let playerSprite:Sprite = null
 let targetSprite: Sprite = null
 let leverPushed = false
@@ -50,40 +127,7 @@ function createPlayer() {
     scene.cameraFollowSprite(playerSprite)
 }
 function createExcavator(tileLocation: tiles.Location){
-    let excavatorSprite: Sprite = sprites.create(img`
-        ........................................
-        ........................................
-        ........................................
-        ........................................
-        ........................................
-        ........................................
-        ........................................
-        ........................................
-        ........................................
-        ........................................
-        ........................................
-        ........................................
-        ........................................
-        ........................................
-        ..ffffffffffffffffffff..................
-        ..ffff5555f5555fffffff..................
-        ..fff55555f55111ffffff..................
-        ..ff555555f55111ffffff..................
-        ....555555f55111........................
-        ....555555f5555.........................
-        ....555555f555555555555555555555555555..
-        ....fffffffffffbbbbbbbbbbbbbbbbbbbbbb5..
-        ....555555f5555555555555555555555555b5..
-        ....555555f5555...............fff5bbb5..
-        ....555555f5555...............fffff.....
-        ..ff555555f5555fffffff........fffff.....
-        ..fff55555f5555fffffff........fffff.....
-        ..ffff5555f5555fffffff..................
-        ..ffffffffffffffffffff..................
-        ........................................
-        ........................................
-        ........................................
-    `,SpriteKind.Excavator)
+    let excavatorSprite: Sprite = sprites.create(assets.image`excavator`,SpriteKind.Excavator)
     tiles.placeOnTile(excavatorSprite, tileLocation)
 }
 function generateTileMapExcavator(){
@@ -113,10 +157,26 @@ function onStart(){
     setTileMap()
     placePlayerOnTileMap()
     createTargetSprite()
-    placeRoombaOnTileMap()
+    //placeRoombaOnTileMap()
     generateTileMapSlime()
-    generateTileMapExcavator()
+    //generateTileMapExcavator()
+    placeEntityOnTileMap()
 }
+
+function placeEntityOnTileMap(){
+    let roombaAmount = randint (1,5)
+    let excavatorAmount = randint(1,2)
+
+    for(let i = 0; i <= roombaAmount; i++){
+        let roomba: Sprite = entityObject[0].createSprite()
+        tiles.placeOnRandomTile(roomba, entityObject[0].tileImage )
+    }
+    for (let i = 0; i <= excavatorAmount; i++) {
+        let excavtor: Sprite = entityObject[1].createSprite()
+        tiles.placeOnRandomTile(excavtor, entityObject[1].tileImage)
+    }
+}
+
  //entry point to game
 onStart()
 //creating sprites on tilemap
@@ -166,7 +226,7 @@ function resetControlAbility(){
     controller.moveSprite(playerSprite)
     scene.cameraFollowSprite(playerSprite)
     controller.moveSprite(currentControlledEntity, 0, 0)
-    setRandomVelocity(currentControlledEntity, 15, randint(-1, 1), randint(-1, 1))
+    setRandomVelocity(currentControlledEntity, sprites.readDataNumber(currentControlledEntity,"speed"), randint(-1, 1), randint(-1, 1))
     currentControlledEntity = null
 }
 // game updates
