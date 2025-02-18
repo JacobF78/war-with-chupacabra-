@@ -3,6 +3,34 @@ namespace SpriteKind{
     export const Target = SpriteKind.create()
     export const Excavator = SpriteKind.create()
 }
+namespace SpriteSheet{
+    export const ecavatorAttackAnimation: Image[][] = [
+        [
+            assets.image`shovelLeft`,
+            assets.image`shovelLeft1`,
+            assets.image`shovelLeft2`,
+            assets.image`shovelLeft3`
+        ],
+        [
+            assets.image`shovelUp`,
+            assets.image`shovelUp1`,
+            assets.image`shovelUp2`,
+            assets.image`shovelUp3`
+        ],
+        [
+            assets.image`shovelRight`,
+            assets.image`shovelRight1`,
+            assets.image`shovelRight2`,
+            assets.image`shovelRight3`
+        ],
+        [
+            assets.image`shovelDown`,
+            assets.image`shovelDown1`,
+            assets.image`shovelDown2`,
+            assets.image`shovelDown3`
+        ]
+    ]
+}
 class Enemy {
     health:number
     spriteImage:Image[]
@@ -173,10 +201,36 @@ function placeEntityOnTileMap(){
     }
     for (let i = 0; i <= excavatorAmount; i++) {
         let excavtor: Sprite = entityObject[1].createSprite()
+        createAttackSprite(excavtor)
         tiles.placeOnRandomTile(excavtor, entityObject[1].tileImage)
     }
 }
+    function createAttackSprite(sprite:Sprite){
+        let attackSprite: Sprite = sprites.create(img`
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+        `, SpriteKind.Excavator)
 
+        
+        sprites.setDataSprite(sprite, "attackSprite", attackSprite)
+        game.forever(function(){
+            attackSprite.setPosition(sprite.x,sprite.y)
+        })
+    }
  //entry point to game
 onStart()
 //creating sprites on tilemap
@@ -492,6 +546,59 @@ function slimeExplodeAnimation(sprite: Sprite){
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function(){
     if(currentControlledEntity == null){
+
+        return
+    }
+    if(currentControlledEntity.kind()== SpriteKind.Excavator){
+        let frameIntervel: number = 50
+        let attackSprite: Sprite = sprites.readDataSprite(currentControlledEntity,"attackSprite")
+        if(characterAnimations.matchesRule(currentControlledEntity, Predicate.FacingLeft)){
+            animation.runImageAnimation(attackSprite, SpriteSheet.ecavatorAttackAnimation[0], frameIntervel,false)
+            
+        } else if (characterAnimations.matchesRule(currentControlledEntity, Predicate.FacingUp)){
+            animation.runImageAnimation(attackSprite, SpriteSheet.ecavatorAttackAnimation[1], frameIntervel, false)
+            
+        } else if (characterAnimations.matchesRule(currentControlledEntity, Predicate.FacingRight)){
+            animation.runImageAnimation(attackSprite, SpriteSheet.ecavatorAttackAnimation[2], frameIntervel, false)
+        }else{
+            animation.runImageAnimation(attackSprite, SpriteSheet.ecavatorAttackAnimation[3], frameIntervel, false)
+        }
+        timer.after(frameIntervel * SpriteSheet.ecavatorAttackAnimation[0].length + 1, function () {
+            attackSprite.setImage(img`
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+                ........................................
+            `)
+        })
         return
     }
     let directionX: number = Math.sign(currentControlledEntity.vx)
