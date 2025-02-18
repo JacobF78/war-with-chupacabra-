@@ -2,6 +2,7 @@ namespace SpriteKind{
     export const Roomba = SpriteKind.create()
     export const Target = SpriteKind.create()
     export const Excavator = SpriteKind.create()
+    export const Shovel = SpriteKind.create()
 }
 namespace SpriteSheet{
     export const ecavatorAttackAnimation: Image[][] = [
@@ -30,7 +31,196 @@ namespace SpriteSheet{
             assets.image`shovelDown3`
         ]
     ]
+    export const slimeExplodeAnimation: Image[] = [
+        img`
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . 7 7 7 7 7 7 . . . . .
+            . . . . . 7 7 7 7 7 7 7 7 . . .
+            . . . . . 7 7 7 7 7 7 7 7 7 . .
+            . . 7 7 7 7 7 7 7 7 7 7 7 7 . .
+            . 7 7 f f f 7 7 7 7 7 f f f 7 .
+            . 7 7 f f f 7 7 7 7 7 f f f 7 7
+            7 7 7 f f f 7 7 7 7 7 f f f 7 7
+            7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+            7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+            7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+            7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+        `,
+        img`
+                . . . . . . . . . . . . . . . .
+                . . . . . . . . . . . . . . . .
+                . . . . . . . . . . 7 . . . . .
+                . . . . 7 . . 7 . . . 7 . . 7 .
+                . . . . . . . . 7 7 . . . . 7 .
+                . . 7 . . 7 . 7 7 . 7 . . . 7 .
+                . . . . . . 7 7 . . 7 7 7 . 7 .
+                7 . . 7 7 . 7 . . . . 7 7 7 7 .
+                . . 7 7 . . . 7 . . 7 . . 7 7 7
+                . 7 7 . . . . . . . . . . . . .
+                . 7 . . . f . . . . . . f . . .
+                7 . 7 f . . . 7 . . . f . . 7 .
+                7 7 7 7 7 7 7 7 7 7 . . . 7 7 7
+                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+            `,
+        img`
+                . . . . . . . . . . 7 . . . . .
+                . . . . . . 7 . . . . . . 7 . 7
+                . . 7 . . . . . . . 7 . . . . .
+                . . . . 7 . . 7 . . . 7 . . 7 .
+                . 7 . . . . . . . . . . . . 7 .
+                . . 7 . . 7 . . 7 . . . . . 7 .
+                . . . . . . . 7 . . . . 7 . 7 .
+                7 . . 7 . . . . . . . . . 7 7 .
+                . . . . . . . 7 . . . . . . . .
+                . . . . . . . . . . . . . . . .
+                . 7 . . . . . . . . . . . . . .
+                . . . . . . . . . . . . . . . .
+                . . . . . . . . . . . . . . . .
+                7 . . . . . . . . . . . . . . 7
+                7 . . . . . . . . . . . . . . .
+                7 7 7 7 7 . . . 7 . . . . 7 7 .
+            `
+    ]
+    export const roombaExplodeAnimation: Image[] = [
+        img`
+            . . . . . . . . . . . . . . . .
+            . . . . f f f f f f f . . . . .
+            . . f f 1 1 1 1 1 1 1 f f . . .
+            . f f 1 f f f f f f f 1 f f . .
+            . f 1 f f f f f f f f f 1 f . .
+            f 1 f f f f f f f f f f f 1 f .
+            f 1 f f b b b b b f f f f 1 f .
+            f 1 f f b f f f b f f f f 1 f .
+            f 1 f f b f f f b f f f f 1 f .
+            f 1 f f b b b b b f f f f 1 f .
+            f 1 f f f f f f f f f f f 1 f .
+            f 1 f f 2 2 f f f f f f f 1 f .
+            . f 1 f 2 2 f f f f f f 1 f . .
+            . f f 1 f f f f f f f 1 f f . .
+            . . f f 1 1 1 1 1 1 1 f f . . .
+            . . . . f f f f f f f . . . . .
+        `,
+        img`
+            . . . . . . . . . . . . . . . .
+            . . . . f f f f f f f . . . . .
+            . . f f 1 1 1 1 1 1 1 f f . . .
+            . f f 1 f f f f f f f 1 f f . .
+            . f 1 f f f f f f f f f 1 f . .
+            f 1 f f f f f 2 2 2 f f f 1 f .
+            f 1 f f b 2 2 2 2 2 f f f 1 f .
+            f 1 f f b 2 2 2 2 2 f f f 1 f .
+            f 1 f f b 2 2 2 2 2 f f f 1 f .
+            f 1 f f b b 2 2 2 f f f f 1 f .
+            f 1 f f f f f f f f f f f 1 f .
+            f 1 f f 2 2 f f f f f f f 1 f .
+            . f 1 f 2 2 f f f f f f 1 f . .
+            . f f 1 f f f f f f f 1 f f . .
+            . . f f 1 1 1 1 1 1 1 f f . . .
+            . . . . f f f f f f f . . . . .
+        `,
+        img`
+                . . . . . . . . . . . . . . . .
+                . . . . f f f f f f f . . . . .
+                . . f f 4 4 1 1 1 1 1 f f . . .
+                . f f 1 4 4 4 4 f f f 1 f f . .
+                . f 1 4 4 4 4 4 4 4 4 4 1 f . .
+                f 1 f 4 4 4 f 2 2 2 4 4 4 1 f .
+                f 1 f 4 4 2 2 2 2 2 4 4 4 4 f .
+                f 1 f 4 4 2 2 2 2 2 4 f 4 1 f .
+                f 1 f 4 4 4 2 2 2 2 4 4 4 1 f .
+                f 1 f 4 4 4 2 2 2 4 4 4 f 1 f .
+                f 1 f 4 4 4 4 4 4 4 4 f f 1 f .
+                f 1 f f 4 4 4 4 4 f f f f 1 f .
+                . f 1 f 2 2 f f f f f f 1 f . .
+                . f f 1 f f f f f f f 1 f f . .
+                . . f f 1 1 1 1 1 1 1 f f . . .
+                . . . . f f f f f f f . . . . .
+            `,
+        img`
+                . . . . . 5 5 5 . . . . . . . .
+                . . . . 5 5 f 5 5 f f . . . . .
+                . . f 5 4 4 1 5 5 5 5 5 f . . .
+                . f 5 1 4 4 4 4 f f f 5 5 f . .
+                . f 5 4 4 4 4 4 4 4 4 4 5 5 . .
+                f 1 5 4 4 4 f 2 2 2 4 4 4 5 5 .
+                f 1 f 4 4 2 2 2 2 2 4 4 4 5 5 .
+                f 5 5 4 4 2 2 2 2 2 4 f 4 5 f .
+                f 5 5 4 4 4 2 2 2 2 4 4 5 5 f .
+                f 5 5 4 4 4 2 2 2 4 4 4 5 5 f .
+                f 5 5 5 4 4 4 4 4 4 5 5 5 1 f .
+                f 1 5 5 4 4 4 4 5 5 5 5 5 1 f .
+                . f 5 5 5 5 5 5 5 f f 5 1 f . .
+                . f f 5 5 5 5 5 5 5 5 5 f f . .
+                . . f f 1 1 1 1 1 1 1 f f . . .
+                . . . . f f f f f f f . . . . .
+            `,
+        img`
+                . . . . . 5 2 2 2 2 2 2 2 2 . .
+                2 2 2 2 2 2 2 2 2 2 2 . . 2 2 .
+                2 . f 5 2 2 2 5 5 5 5 2 2 . . 2
+                2 f 5 2 2 4 2 2 f f f 5 2 2 . 2
+                2 f 5 2 4 4 4 4 2 4 4 4 5 2 . 2
+                2 1 2 2 4 4 f 2 2 2 4 4 4 5 2 2
+                2 1 2 2 4 2 2 2 2 2 4 4 4 5 2 2
+                2 5 2 2 4 2 2 2 2 2 4 f 4 5 2 2
+                2 2 5 2 4 4 2 2 2 2 4 4 5 2 f 2
+                2 2 5 2 4 4 2 2 2 4 4 4 5 2 f 2
+                2 2 5 5 4 4 4 4 4 4 5 5 2 2 2 .
+                f 2 2 5 4 4 4 4 5 5 5 2 2 2 f .
+                . f 2 2 5 5 5 5 2 2 2 2 2 f . .
+                . f 2 2 2 2 2 2 2 2 2 2 f f . .
+                . . f 2 2 2 2 2 2 2 1 f f . . .
+                . . . . f f f f f f f . . . . .
+            `
+    ]
 }
+namespace OverlapEvents{
+    sprites.onOverlap(SpriteKind.Roomba, SpriteKind.Enemy, function (sprite, otherSprite) {
+        if (currentControlledEntity == null) {
+            sprite.destroy()
+            roombaExplodeAnimation(sprite)
+
+            return
+
+        }
+
+
+
+
+        if (!isDashing) {
+            if (sprite.id == currentControlledEntity.id) {
+                resetControlAbility()
+                scene.cameraShake(40, 500)
+            }
+            sprite.destroy()
+            roombaExplodeAnimation(sprite)
+
+            return
+        }
+        if (sprite.id == currentControlledEntity.id) {
+            otherSprite.destroy()
+            slimeExplodeAnimation(otherSprite)
+
+            return
+        }
+
+    })
+    sprites.onOverlap(SpriteKind.Shovel, SpriteKind.Enemy, function(sprite,otherSprite){
+        otherSprite.destroy()
+        slimeExplodeAnimation(otherSprite)
+    })
+    sprites.onOverlap(SpriteKind.Excavator, SpriteKind.Enemy, function (sprite, otherSprite) {
+        otherSprite.destroy()
+        slimeExplodeAnimation(otherSprite)
+    })
+}
+
 class Enemy {
     health:number
     spriteImage:Image[]
@@ -223,7 +413,7 @@ function placeEntityOnTileMap(){
             . . . . . . . . . . . . . . . .
             . . . . . . . . . . . . . . . .
             . . . . . . . . . . . . . . . .
-        `, SpriteKind.Excavator)
+        `, SpriteKind.Shovel)
 
         
         sprites.setDataSprite(sprite, "attackSprite", attackSprite)
@@ -320,36 +510,7 @@ game.onUpdate(function(){
         
     }
 })
-sprites.onOverlap(SpriteKind.Roomba, SpriteKind.Enemy,function(sprite,otherSprite){
-    if(currentControlledEntity == null){
-        sprite.destroy()
-        roombaExplodeAnimation(sprite)
-        
-            return
-        
-    }
 
-
-
-
-    if(!isDashing){
-        if (sprite.id == currentControlledEntity.id) {
-            resetControlAbility()
-            scene.cameraShake(40, 500)
-        }
-        sprite.destroy()
-        roombaExplodeAnimation(sprite)
-        
-        return
-    }
-    if(sprite.id == currentControlledEntity.id){
-        otherSprite.destroy()
-        slimeExplodeAnimation(otherSprite)
-        
-        return
-    }
-    
-})
 function roombaExplodeAnimation(sprite: Sprite){
     let effectsSprite: Sprite = sprites.create(img`
             . . . . . . . . . . . . . . . .
@@ -370,98 +531,7 @@ function roombaExplodeAnimation(sprite: Sprite){
             . . . . . . . . . . . . . . . .
         `, SpriteKind.Food)
     effectsSprite.setPosition(effectsSprite.x = sprite.x, effectsSprite.y = sprite.y)
-    animation.runImageAnimation(effectsSprite, [
-        img`
-                . . . . . . . . . . . . . . . .
-                . . . . f f f f f f f . . . . .
-                . . f f 1 1 1 1 1 1 1 f f . . .
-                . f f 1 f f f f f f f 1 f f . .
-                . f 1 f f f f f f f f f 1 f . .
-                f 1 f f f f f f f f f f f 1 f .
-                f 1 f f b b b b b f f f f 1 f .
-                f 1 f f b f f f b f f f f 1 f .
-                f 1 f f b f f f b f f f f 1 f .
-                f 1 f f b b b b b f f f f 1 f .
-                f 1 f f f f f f f f f f f 1 f .
-                f 1 f f 2 2 f f f f f f f 1 f .
-                . f 1 f 2 2 f f f f f f 1 f . .
-                . f f 1 f f f f f f f 1 f f . .
-                . . f f 1 1 1 1 1 1 1 f f . . .
-                . . . . f f f f f f f . . . . .
-            `,
-        img`
-                . . . . . . . . . . . . . . . .
-                . . . . f f f f f f f . . . . .
-                . . f f 1 1 1 1 1 1 1 f f . . .
-                . f f 1 f f f f f f f 1 f f . .
-                . f 1 f f f f f f f f f 1 f . .
-                f 1 f f f f f 2 2 2 f f f 1 f .
-                f 1 f f b 2 2 2 2 2 f f f 1 f .
-                f 1 f f b 2 2 2 2 2 f f f 1 f .
-                f 1 f f b 2 2 2 2 2 f f f 1 f .
-                f 1 f f b b 2 2 2 f f f f 1 f .
-                f 1 f f f f f f f f f f f 1 f .
-                f 1 f f 2 2 f f f f f f f 1 f .
-                . f 1 f 2 2 f f f f f f 1 f . .
-                . f f 1 f f f f f f f 1 f f . .
-                . . f f 1 1 1 1 1 1 1 f f . . .
-                . . . . f f f f f f f . . . . .
-            `,
-        img`
-                . . . . . . . . . . . . . . . .
-                . . . . f f f f f f f . . . . .
-                . . f f 4 4 1 1 1 1 1 f f . . .
-                . f f 1 4 4 4 4 f f f 1 f f . .
-                . f 1 4 4 4 4 4 4 4 4 4 1 f . .
-                f 1 f 4 4 4 f 2 2 2 4 4 4 1 f .
-                f 1 f 4 4 2 2 2 2 2 4 4 4 4 f .
-                f 1 f 4 4 2 2 2 2 2 4 f 4 1 f .
-                f 1 f 4 4 4 2 2 2 2 4 4 4 1 f .
-                f 1 f 4 4 4 2 2 2 4 4 4 f 1 f .
-                f 1 f 4 4 4 4 4 4 4 4 f f 1 f .
-                f 1 f f 4 4 4 4 4 f f f f 1 f .
-                . f 1 f 2 2 f f f f f f 1 f . .
-                . f f 1 f f f f f f f 1 f f . .
-                . . f f 1 1 1 1 1 1 1 f f . . .
-                . . . . f f f f f f f . . . . .
-            `,
-        img`
-                . . . . . 5 5 5 . . . . . . . .
-                . . . . 5 5 f 5 5 f f . . . . .
-                . . f 5 4 4 1 5 5 5 5 5 f . . .
-                . f 5 1 4 4 4 4 f f f 5 5 f . .
-                . f 5 4 4 4 4 4 4 4 4 4 5 5 . .
-                f 1 5 4 4 4 f 2 2 2 4 4 4 5 5 .
-                f 1 f 4 4 2 2 2 2 2 4 4 4 5 5 .
-                f 5 5 4 4 2 2 2 2 2 4 f 4 5 f .
-                f 5 5 4 4 4 2 2 2 2 4 4 5 5 f .
-                f 5 5 4 4 4 2 2 2 4 4 4 5 5 f .
-                f 5 5 5 4 4 4 4 4 4 5 5 5 1 f .
-                f 1 5 5 4 4 4 4 5 5 5 5 5 1 f .
-                . f 5 5 5 5 5 5 5 f f 5 1 f . .
-                . f f 5 5 5 5 5 5 5 5 5 f f . .
-                . . f f 1 1 1 1 1 1 1 f f . . .
-                . . . . f f f f f f f . . . . .
-            `,
-        img`
-                . . . . . 5 2 2 2 2 2 2 2 2 . .
-                2 2 2 2 2 2 2 2 2 2 2 . . 2 2 .
-                2 . f 5 2 2 2 5 5 5 5 2 2 . . 2
-                2 f 5 2 2 4 2 2 f f f 5 2 2 . 2
-                2 f 5 2 4 4 4 4 2 4 4 4 5 2 . 2
-                2 1 2 2 4 4 f 2 2 2 4 4 4 5 2 2
-                2 1 2 2 4 2 2 2 2 2 4 4 4 5 2 2
-                2 5 2 2 4 2 2 2 2 2 4 f 4 5 2 2
-                2 2 5 2 4 4 2 2 2 2 4 4 5 2 f 2
-                2 2 5 2 4 4 2 2 2 4 4 4 5 2 f 2
-                2 2 5 5 4 4 4 4 4 4 5 5 2 2 2 .
-                f 2 2 5 4 4 4 4 5 5 5 2 2 2 f .
-                . f 2 2 5 5 5 5 2 2 2 2 2 f . .
-                . f 2 2 2 2 2 2 2 2 2 2 f f . .
-                . . f 2 2 2 2 2 2 2 1 f f . . .
-                . . . . f f f f f f f . . . . .
-            `
-    ], 50, false)
+    animation.runImageAnimation(effectsSprite,SpriteSheet.roombaExplodeAnimation, 50, false)
     effectsSprite.lifespan = 251
 
     
@@ -486,62 +556,7 @@ function slimeExplodeAnimation(sprite: Sprite){
             . . . . . . . . . . . . . . . .
         `, SpriteKind.Food)
     effectsSprite.setPosition(effectsSprite.x = sprite.x, effectsSprite.y = sprite.y)
-    animation.runImageAnimation(effectsSprite, [
-        img`
-                . . . . . . . . . . . . . . . .
-                . . . . . . . . . . . . . . . .
-                . . . . . . . . . . . . . . . .
-                . . . . . . . . . . . . . . . .
-                . . . . . . . . . . . . . . . .
-                . . . . . 7 7 7 7 7 7 . . . . .
-                . . . . . 7 7 7 7 7 7 7 7 . . .
-                . . . . . 7 7 7 7 7 7 7 7 7 . .
-                . . 7 7 7 7 7 7 7 7 7 7 7 7 . .
-                . 7 7 f f f 7 7 7 7 7 f f f 7 .
-                . 7 7 f f f 7 7 7 7 7 f f f 7 7
-                7 7 7 f f f 7 7 7 7 7 f f f 7 7
-                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
-                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
-                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
-                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
-            `,
-        img`
-                . . . . . . . . . . . . . . . .
-                . . . . . . . . . . . . . . . .
-                . . . . . . . . . . 7 . . . . .
-                . . . . 7 . . 7 . . . 7 . . 7 .
-                . . . . . . . . 7 7 . . . . 7 .
-                . . 7 . . 7 . 7 7 . 7 . . . 7 .
-                . . . . . . 7 7 . . 7 7 7 . 7 .
-                7 . . 7 7 . 7 . . . . 7 7 7 7 .
-                . . 7 7 . . . 7 . . 7 . . 7 7 7
-                . 7 7 . . . . . . . . . . . . .
-                . 7 . . . f . . . . . . f . . .
-                7 . 7 f . . . 7 . . . f . . 7 .
-                7 7 7 7 7 7 7 7 7 7 . . . 7 7 7
-                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
-                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
-                7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
-            `,
-        img`
-                . . . . . . . . . . 7 . . . . .
-                . . . . . . 7 . . . . . . 7 . 7
-                . . 7 . . . . . . . 7 . . . . .
-                . . . . 7 . . 7 . . . 7 . . 7 .
-                . 7 . . . . . . . . . . . . 7 .
-                . . 7 . . 7 . . 7 . . . . . 7 .
-                . . . . . . . 7 . . . . 7 . 7 .
-                7 . . 7 . . . . . . . . . 7 7 .
-                . . . . . . . 7 . . . . . . . .
-                . . . . . . . . . . . . . . . .
-                . 7 . . . . . . . . . . . . . .
-                . . . . . . . . . . . . . . . .
-                . . . . . . . . . . . . . . . .
-                7 . . . . . . . . . . . . . . 7
-                7 . . . . . . . . . . . . . . .
-                7 7 7 7 7 . . . 7 . . . . 7 7 .
-            `
-    ], 100, false)
+    animation.runImageAnimation(effectsSprite,SpriteSheet.slimeExplodeAnimation, 100, false)
     effectsSprite.lifespan = 301
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function(){
