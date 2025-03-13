@@ -173,4 +173,5 @@ namespace SpriteSheet {
                 . . . . f f f f f f f . . . . .
             `
     ]
+    export const zombie: Image =assets.image`zombie`
 }
