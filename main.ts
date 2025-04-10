@@ -3,6 +3,7 @@ namespace SpriteKind {
     export const Target = SpriteKind.create()
     export const Excavator = SpriteKind.create()
     export const Shovel = SpriteKind.create() 
+    export const Human = SpriteKind.create()
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     if (currentControlledEntity == null) {
@@ -68,6 +69,35 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         })
     })
 })
+function zombieExplodeAnimation(sprite: Sprite) {
+    let effectsSprite = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Food)
+    effectsSprite.setPosition(effectsSprite.x = sprite.x, effectsSprite.y = sprite.y)
+    animation.runImageAnimation(
+        effectsSprite,
+        SpriteSheet.zombieExplodeAnimation,
+        100,
+        false
+    )
+    effectsSprite.lifespan = 601
+}
+
 function slimeExplodeAnimation (sprite: Sprite) {
     let effectsSprite = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -125,7 +155,7 @@ function setRandomVelocity (sprite: Sprite, maxSpeed: number, directionX: number
 function createTargetSprite () {
     targetSprite = sprites.create(assets.image`target`, SpriteKind.Target)
 }
-function generateTileMapSlime () {
+function generateTileMapEnemy () {
     let enemyAmount = randint(1, 4)
     for (let j = 0; j <= enemyAmount; j++) {
         createRandomEnemy(tiles.getRandomTileByType(assets.tile`floorTile`))
@@ -187,8 +217,9 @@ function onStart () {
     setTileMap()
     placePlayerOnTileMap()
     createTargetSprite()
+    generateTileMapHuman()
     
-    generateTileMapSlime()
+    generateTileMapEnemy()
     placeEntityOnTileMap()
 }
 function createPlayer () {
@@ -196,6 +227,14 @@ function createPlayer () {
     controller.moveSprite(playerSprite)
     scene.cameraFollowSprite(playerSprite)
 }
+function generateTileMapHuman(){
+    let humanAmount = randint(1,5)
+    for(let i = 0; i <= humanAmount; i++){
+        let humanSprite = humanObject[0].createSprite()
+        tiles.placeOnRandomTile(humanSprite, entityObject[0].tileImage)
+    }
+}
+
 function placeEntityOnTileMap () {
     let roombaAmount = randint(1, 5)
     let excavatorAmount = randint(1, 2)
@@ -320,7 +359,14 @@ namespace OverlapEvents{
     })
     sprites.onOverlap(SpriteKind.Shovel, SpriteKind.Enemy, function(sprite,otherSprite){
         otherSprite.destroy()
-        slimeExplodeAnimation(otherSprite)
+        if(sprites.readDataString(otherSprite, "type") == "zombie"){
+            zombieExplodeAnimation(otherSprite)
+        }else{
+            slimeExplodeAnimation(otherSprite)
+        }
+        
+        
+        
     })
     sprites.onOverlap(SpriteKind.Excavator, SpriteKind.Enemy, function (sprite, otherSprite) {
         if(!currentControlledEntity){
@@ -339,12 +385,16 @@ namespace OverlapEvents{
         
     })
 }
+let humanObject: Human[] = [
+    new Human(30,20, SpriteKind.Human, SpriteSheet.human)
+]
 
 let enemyObjects = [
     new Enemy(2,[assets.image`slime`],5,SpriteKind.Enemy),
     new Enemy(50,[SpriteSheet.zombie],9999999999,SpriteKind.Enemy)
     ]
 
+    enemyObjects[0].setSpriteType("slime")
     enemyObjects[1].setSpriteType("zombie")
 
 let entityObject = [new Entity(20, assets.image`roomba`,1,1,assets.tile`floorTile`, SpriteKind.Roomba), new Entity(0,assets.image `excavator`, 20,30,assets.tile `floorTile`, SpriteKind.Excavator)]
@@ -367,6 +417,14 @@ function createRoomba(tileLocation:tiles.Location){
     roombaSprite.z = 30
 }
 // game updates
+ game.forever(function(){
+    for(let enemy of sprites.allOfKind(SpriteKind.Enemy)){
+        if(sprites.readDataString(enemy, "type") == "slime"){
+            let randomDirection: spriteutils.Position = spriteutils.pos(Math.randomRange(-10, 10),Math.randomRange(-10, 10))
+            spriteutils.moveTo(enemy, spriteutils.pos(enemy.x + randomDirection.x, enemy.y + randomDirection.y), 300,true)
+        }
+    }
+ })
 game.onUpdate(function () {
     let targetSpriteLocation = spriteutils.getSpritesWithin(SpriteKind.Roomba,40,playerSprite).concat(spriteutils.getSpritesWithin(SpriteKind.Excavator, 40, playerSprite))
 targetSprite.setFlag(SpriteFlag.Invisible, true)

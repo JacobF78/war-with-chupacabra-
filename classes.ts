@@ -77,3 +77,26 @@ class Entity {
         this.spriteAnimation = (animation)
     }
 }
+
+
+class Human{
+    speed: number
+    health: number
+    kind: number
+    spriteImage: Image
+    animation: Image[][]
+
+    constructor(speed:number, health:number, kind:number, spriteImage:Image){
+        this.speed = speed
+        this.health = health
+        this.kind = kind
+        this.spriteImage = spriteImage
+    }
+
+    createSprite(){
+        let humanSprite:Sprite = sprites.create(this.spriteImage, this.kind)
+        sprites.setDataNumber(humanSprite, "health", this.health)
+        sprites.setDataNumber(humanSprite, "speed", this.speed)
+        return humanSprite
+    }
+}
