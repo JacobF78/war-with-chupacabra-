@@ -287,24 +287,8 @@ function roombaExplodeAnimation (sprite: Sprite) {
     effectsSprite.setPosition(effectsSprite.x = sprite.x, effectsSprite.y = sprite.y)
     animation.runImageAnimation(
     effectsSprite,
-    [img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `],
+    SpriteSheet.roombaExplodeAnimation
+        ,
     50,
     false
     )
@@ -373,7 +357,7 @@ namespace OverlapEvents{
             return
         }
         if(sprites.readDataString(otherSprite,"type") == "zombie"){
-                
+            zombieExplodeAnimation(otherSprite)
         }else {
             slimeExplodeAnimation(otherSprite)
 
@@ -384,14 +368,27 @@ namespace OverlapEvents{
         })
         
     })
+    sprites.onOverlap(SpriteKind.Human, SpriteKind.Enemy, function(sprite: Sprite, otherSprite: Sprite){
+        let humanHealth: number = sprites.readDataNumber(sprite, "health")
+        let enemyDamage: number = sprites.readDataNumber(otherSprite,"attackPower")
+
+        humanHealth = humanHealth - enemyDamage
+        if(humanHealth <= 0){
+            sprite.destroy()
+            return
+        }
+        sprites.setDataNumber(sprite, "health", humanHealth)
+        sprite.sayText(humanHealth)
+        pause(1000)
+    })
 }
 let humanObject: Human[] = [
-    new Human(30,20, SpriteKind.Human, SpriteSheet.human)
+    new Human(30,200, SpriteKind.Human, SpriteSheet.human)
 ]
 
 let enemyObjects = [
     new Enemy(2,[assets.image`slime`],5,SpriteKind.Enemy),
-    new Enemy(50,[SpriteSheet.zombie],9999999999,SpriteKind.Enemy)
+    new Enemy(50,[SpriteSheet.zombie],40,SpriteKind.Enemy)
     ]
 
     enemyObjects[0].setSpriteType("slime")
@@ -417,14 +414,38 @@ function createRoomba(tileLocation:tiles.Location){
     roombaSprite.z = 30
 }
 // game updates
- game.forever(function(){
-    for(let enemy of sprites.allOfKind(SpriteKind.Enemy)){
-        if(sprites.readDataString(enemy, "type") == "slime"){
-            let randomDirection: spriteutils.Position = spriteutils.pos(Math.randomRange(-10, 10),Math.randomRange(-10, 10))
-            spriteutils.moveTo(enemy, spriteutils.pos(enemy.x + randomDirection.x, enemy.y + randomDirection.y), 300,true)
-        }
+//  game.forever(function(){
+//     for(let enemy of sprites.allOfKind(SpriteKind.Enemy)){
+//         if (sprites.readDataString(enemy, "type") == "slime" || sprites.readDataString(enemy, "type") == "zombie"){
+//             let randomDirection: spriteutils.Position = spriteutils.pos(Math.randomRange(-10, 10),Math.randomRange(-10, 10))
+//             spriteutils.moveTo(enemy, spriteutils.pos(enemy.x + randomDirection.x, enemy.y + randomDirection.y), Math.randomRange(300,500),true)
+            
+//         }
+//     }
+//  })
+// Slime Enemy update event
+spriteutils.onSpriteKindUpdateInterval(SpriteKind.Enemy, 501, function(sprite: Sprite){
+    if (sprites.readDataString(sprite, "type") == "slime") {
+        let randomDirection: spriteutils.Position = spriteutils.pos(Math.randomRange(-10, 10), Math.randomRange(-10, 10))
+        spriteutils.moveTo(sprite, spriteutils.pos(sprite.x + randomDirection.x, sprite.y + randomDirection.y), Math.randomRange(300, 500), false)
+
     }
- })
+})
+// Zombie Enemy update event
+spriteutils.onSpriteKindUpdateInterval(SpriteKind.Enemy, 501, function (sprite: Sprite) {
+    if (sprites.readDataString(sprite, "type") == "zombie") {
+        let nearbyHumans: Sprite[] = spriteutils.getSpritesWithin(SpriteKind.Human, 50, sprite)
+        if(nearbyHumans.length > 0){
+            sprite.follow(nearbyHumans[0], 100)
+            sprites.setDataBoolean(nearbyHumans[0], "beingChased", true)
+            return
+        }
+        let randomDirection: spriteutils.Position = spriteutils.pos(Math.randomRange(-10, 10), Math.randomRange(-10, 10))
+        spriteutils.moveTo(sprite, spriteutils.pos(sprite.x + randomDirection.x, sprite.y + randomDirection.y), Math.randomRange(300, 500), false)
+
+    }
+})
+
 game.onUpdate(function () {
     let targetSpriteLocation = spriteutils.getSpritesWithin(SpriteKind.Roomba,40,playerSprite).concat(spriteutils.getSpritesWithin(SpriteKind.Excavator, 40, playerSprite))
 targetSprite.setFlag(SpriteFlag.Invisible, true)

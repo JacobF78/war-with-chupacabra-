@@ -155,23 +155,23 @@ namespace SpriteSheet {
                 . . . . f f f f f f f . . . . .
             `,
         img`
-                . . . . . 5 2 2 2 2 2 2 2 2 . .
-                2 2 2 2 2 2 2 2 2 2 2 . . 2 2 .
-                2 . f 5 2 2 2 5 5 5 5 2 2 . . 2
-                2 f 5 2 2 4 2 2 f f f 5 2 2 . 2
-                2 f 5 2 4 4 4 4 2 4 4 4 5 2 . 2
-                2 1 2 2 4 4 f 2 2 2 4 4 4 5 2 2
-                2 1 2 2 4 2 2 2 2 2 4 4 4 5 2 2
-                2 5 2 2 4 2 2 2 2 2 4 f 4 5 2 2
-                2 2 5 2 4 4 2 2 2 2 4 4 5 2 f 2
-                2 2 5 2 4 4 2 2 2 4 4 4 5 2 f 2
-                2 2 5 5 4 4 4 4 4 4 5 5 2 2 2 .
-                f 2 2 5 4 4 4 4 5 5 5 2 2 2 f .
-                . f 2 2 5 5 5 5 2 2 2 2 2 f . .
-                . f 2 2 2 2 2 2 2 2 2 2 f f . .
-                . . f 2 2 2 2 2 2 2 1 f f . . .
-                . . . . f f f f f f f . . . . .
-            `
+            . . . . . 5 2 2 2 2 2 2 2 2 . .
+            2 2 2 2 2 2 2 2 2 2 2 . . 2 2 .
+            2 . f 5 2 2 2 5 5 5 5 2 2 . . 2
+            2 f 5 2 2 4 2 2 f f f 5 2 2 . 2
+            2 f 5 2 4 4 4 4 2 4 4 4 5 2 . 2
+            2 1 2 2 4 4 f 2 2 2 4 4 4 5 2 2
+            2 1 2 2 4 2 2 2 2 2 4 4 4 5 2 2
+            2 5 2 2 4 2 2 2 2 2 4 f 4 5 2 2
+            2 2 5 2 4 4 2 2 2 2 4 4 5 2 f 2
+            2 2 5 2 4 4 2 2 2 4 4 4 5 2 f 2
+            2 2 5 5 4 4 4 4 4 4 5 5 2 2 2 .
+            f 2 2 5 4 4 4 4 5 5 5 2 2 2 f .
+            . f 2 2 5 5 5 5 2 2 2 2 2 f . .
+            . f 2 2 2 2 2 2 2 2 2 2 f f . .
+            . . f 2 2 2 2 2 2 2 1 f f . . .
+            . . . . f f f f f f f . . . . .
+        `
     ]
     export const zombie: Image =assets.image`zombie`
     export const zombieExplodeAnimation: Image[] = [
@@ -334,4 +334,6 @@ namespace SpriteSheet {
     ]
 
     export const human: Image =assets.image`human`
+
+    export const cyborg: Image =assets.image`cyborg`
 }
