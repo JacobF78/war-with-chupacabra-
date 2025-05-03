@@ -303,6 +303,7 @@ let isDashing = false
 let currentControlledEntity: Sprite = null
 let leverPushed = false
 let playerSprite:Sprite = null
+let humanNumber = 0
 namespace OverlapEvents{
     sprites.onOverlap(SpriteKind.Roomba, SpriteKind.Enemy, function (sprite, otherSprite) {
         if (currentControlledEntity == null) {
@@ -380,6 +381,11 @@ namespace OverlapEvents{
         sprites.setDataNumber(sprite, "health", humanHealth)
         sprite.sayText(humanHealth)
         pause(1000)
+    })
+    sprites.onOverlap(SpriteKind.Player, SpriteKind.Human, function(sprite: Sprite, otherSprite: Sprite){
+        otherSprite.destroy()
+        humanNumber +=1
+        sprite.sayText(humanNumber)
     })
 }
 let humanObject: Human[] = [
