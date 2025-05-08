@@ -223,7 +223,7 @@ function onStart () {
     placeEntityOnTileMap()
 }
 function createPlayer () {
-    playerSprite = sprites.create(assets.image`player`, SpriteKind.Player)
+    playerSprite = sprites.create(SpriteSheet.cyborg, SpriteKind.Player)
     controller.moveSprite(playerSprite)
     scene.cameraFollowSprite(playerSprite)
 }
@@ -364,9 +364,7 @@ namespace OverlapEvents{
 
         }
 
-        timer.after(500,function(){
-            otherSprite.destroy()
-        })
+        otherSprite.destroy()
         
     })
     sprites.onOverlap(SpriteKind.Human, SpriteKind.Enemy, function(sprite: Sprite, otherSprite: Sprite){
@@ -380,12 +378,16 @@ namespace OverlapEvents{
         }
         sprites.setDataNumber(sprite, "health", humanHealth)
         sprite.sayText(humanHealth)
+        if(sprites.readDataString(otherSprite, "type") == "zombie"){
+            sprites.setDataBoolean(sprite, "beingChased", true)
+            sprites.setDataSprite(otherSprite, "target", sprite)
+        }
         pause(1000)
     })
     sprites.onOverlap(SpriteKind.Player, SpriteKind.Human, function(sprite: Sprite, otherSprite: Sprite){
         otherSprite.destroy()
         humanNumber +=1
-        sprite.sayText(humanNumber)
+        
     })
 }
 let humanObject: Human[] = [
@@ -444,7 +446,13 @@ spriteutils.onSpriteKindUpdateInterval(SpriteKind.Enemy, 501, function (sprite: 
         if(nearbyHumans.length > 0){
             sprite.follow(nearbyHumans[0], 100)
             sprites.setDataBoolean(nearbyHumans[0], "beingChased", true)
+            sprites.setDataSprite(sprite, "target", nearbyHumans[0])
             return
+        }
+        let humanSprite: Sprite = sprites.readDataSprite(sprite, "target")
+        if(humanSprite != null){
+            sprites.setDataBoolean(humanSprite, "beingChased", false)
+            sprites.setDataSprite(sprite, "target", null)
         }
         let randomDirection: spriteutils.Position = spriteutils.pos(Math.randomRange(-10, 10), Math.randomRange(-10, 10))
         spriteutils.moveTo(sprite, spriteutils.pos(sprite.x + randomDirection.x, sprite.y + randomDirection.y), Math.randomRange(300, 500), false)
