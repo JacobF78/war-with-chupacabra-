@@ -338,4 +338,6 @@ namespace SpriteSheet {
     export const cyborg: Image =assets.image`cyborg`
 
     export const largeEnemy: Image =assets.image`largeEnemy`
+
+    export const scooper: Image =assets.image`scooper`
 }

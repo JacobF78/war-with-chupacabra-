@@ -155,6 +155,12 @@ function setRandomVelocity (sprite: Sprite, maxSpeed: number, directionX: number
 function createTargetSprite () {
     targetSprite = sprites.create(assets.image`target`, SpriteKind.Target)
 }
+function generateLargeEnemy(){
+    let largeEnemyAmount = randint(1,2)
+    for(let b = 0; b <= largeEnemyAmount; b++){
+        createLargeEnemy(tiles.getRandomTileByType(assets.tile`floorTile`))
+    }
+}
 function generateTileMapEnemy () {
     let enemyAmount = randint(1, 4)
     for (let j = 0; j <= enemyAmount; j++) {
@@ -166,6 +172,7 @@ function placePlayerOnTileMap () {
     createPlayer()
     tiles.placeOnTile(playerSprite, tiles.getTileLocation(7, 7))
     playerSprite.z = 50
+    playerSprite.scale = 1.2
 }
 function createAttackSprite (sprite: Sprite) {
     let attackSprite = sprites.create(img`
@@ -218,6 +225,7 @@ function onStart () {
     placePlayerOnTileMap()
     createTargetSprite()
     generateTileMapHuman()
+    generateLargeEnemy()
     
     generateTileMapEnemy()
     placeEntityOnTileMap()
@@ -265,6 +273,7 @@ function runAnimation (sprite: Sprite, animation2: Image[]) {
 pause(frameIntervel)
     }
 }
+
 function roombaExplodeAnimation (sprite: Sprite) {
     let effectsSprite = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -407,6 +416,9 @@ let entityObject = [new Entity(20, assets.image`roomba`,1,1,assets.tile`floorTil
 function createExcavator(tileLocation: tiles.Location){
     let excavatorSprite: Sprite = sprites.create(assets.image`excavator`,SpriteKind.Excavator)
     tiles.placeOnTile(excavatorSprite, tileLocation)
+}
+function createLargeEnemy(tileLocation: tiles.Location){
+    let largeEnemySprite: Sprite = sprites.create(SpriteSheet.largeEnemy)
 }
 function createRandomEnemy(tileLocation: tiles.Location){
 
