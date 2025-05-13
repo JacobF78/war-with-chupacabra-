@@ -4,6 +4,7 @@ namespace SpriteKind {
     export const Excavator = SpriteKind.create()
     export const Shovel = SpriteKind.create() 
     export const Human = SpriteKind.create()
+    export const Scooper = SpriteKind.create()
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     if (currentControlledEntity == null) {
@@ -159,6 +160,7 @@ function generateLargeEnemy(){
     let largeEnemyAmount = randint(1,2)
     for(let b = 0; b <= largeEnemyAmount; b++){
         createLargeEnemy(tiles.getRandomTileByType(assets.tile`floorTile`))
+        
     }
 }
 function generateTileMapEnemy () {
@@ -172,7 +174,7 @@ function placePlayerOnTileMap () {
     createPlayer()
     tiles.placeOnTile(playerSprite, tiles.getTileLocation(7, 7))
     playerSprite.z = 50
-    playerSprite.scale = 1.2
+    
 }
 function createAttackSprite (sprite: Sprite) {
     let attackSprite = sprites.create(img`
@@ -207,7 +209,12 @@ function generateTileMapExcavator () {
     }
 }
 function setTileMap () {
-    tiles.setTilemap(tilemap`test`)
+    tiles.setTilemap(allTileMap[1])
+    for(let location of tiles.getTilesByType(assets.tile `ScooperTile`)){
+        let scooperSprite: Sprite = sprites.create(SpriteSheet.scooper, SpriteKind.Scooper)
+        tiles.placeOnTile(scooperSprite, location)
+        tiles.setTileAt(location, (assets.tile `floorTile`))
+    }
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     if (!(currentControlledEntity)) {
@@ -313,6 +320,9 @@ let currentControlledEntity: Sprite = null
 let leverPushed = false
 let playerSprite:Sprite = null
 let humanNumber = 0
+let allTileMap: tiles.TileMapData[] = [
+    tilemap`test`,
+    tilemap`level_1`]
 namespace OverlapEvents{
     sprites.onOverlap(SpriteKind.Roomba, SpriteKind.Enemy, function (sprite, otherSprite) {
         if (currentControlledEntity == null) {
@@ -419,6 +429,8 @@ function createExcavator(tileLocation: tiles.Location){
 }
 function createLargeEnemy(tileLocation: tiles.Location){
     let largeEnemySprite: Sprite = sprites.create(SpriteSheet.largeEnemy)
+    tiles.placeOnTile(largeEnemySprite, tileLocation)
+    largeEnemySprite.scale = 3
 }
 function createRandomEnemy(tileLocation: tiles.Location){
 
