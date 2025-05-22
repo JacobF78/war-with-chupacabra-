@@ -212,8 +212,20 @@ function setTileMap () {
     tiles.setTilemap(allTileMap[1])
     for(let location of tiles.getTilesByType(assets.tile `ScooperTile`)){
         let scooperSprite: Sprite = sprites.create(SpriteSheet.scooper, SpriteKind.Scooper)
+        let arrowSprite: Sprite = sprites.create(SpriteSheet.scooperArrow, SpriteKind.Food)
+
         tiles.placeOnTile(scooperSprite, location)
+        arrowSprite.setPosition(scooperSprite.x, scooperSprite.y)
+        let offSetY = 10
+        arrowSprite.y -= offSetY
+        let time = control.eventContext().deltaTime
+        game.forever(function(){
+            arrowSprite.y = scooperSprite.y - offSetY + 8*Math.sin(5*time)
+            time += control.eventContext().deltaTime
+        })
         tiles.setTileAt(location, (assets.tile `floorTile`))
+        animation.runImageAnimation(scooperSprite, SpriteSheet.scooperIdleAnimation, 250, true)
+
     }
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -228,6 +240,7 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
 
 
 function onStart () {
+    info.setScore(0)
     setTileMap()
     placePlayerOnTileMap()
     createTargetSprite()
@@ -408,6 +421,28 @@ namespace OverlapEvents{
         humanNumber +=1
         
     })
+
+    sprites.onOverlap(SpriteKind.Player, SpriteKind.Scooper, function (sprite, otherSprite){
+        if(humanNumber <= 0){
+            return
+        }
+        humanNumber -=1
+        let humanFood: Sprite = sprites.create(SpriteSheet.human, SpriteKind.Food)
+        humanFood.setPosition(otherSprite.x -32, otherSprite.y)
+        otherSprite.setFlag(SpriteFlag.Ghost, true)
+        animation.runImageAnimation(otherSprite,SpriteSheet.scooperAttackAnimation, 100, false)
+        pause(500)
+        scene.cameraShake(100, 200)
+        animation.runImageAnimation(humanFood, SpriteSheet.humanBits,100,false)
+        timer.after(SpriteSheet.scooperAttackAnimation.length*100 +1,function(){
+            otherSprite.setFlag(SpriteFlag.Ghost, false)
+            
+
+        })
+
+        animation.runImageAnimation(otherSprite, SpriteSheet.scooperIdleAnimation, 250, true)
+    })
+
 }
 let humanObject: Human[] = [
     new Human(30,200, SpriteKind.Human, SpriteSheet.human)
